@@ -1,6 +1,6 @@
 """
 -------------------------------------------------------------------------------
-Outil de Réconciliation Phylogénétique : Hermine KIOSSOU
+Outil de Réconciliation Phylogénétique : Conceptia Dagba Allade, Hermine Kiossou, Homero Sanchez
 -------------------------------------------------------------------------------
 Ce programme réalise la réconciliation entre un arbre de gènes et un arbre
 d'espèces à l'aide de la librairie ete3, en mettant en évidence l'évolution
@@ -11,7 +11,7 @@ l'espèce correspondante dans laquelle le gène (ou son ancêtre) est présent.
 Elle permet de détecter les événements évolutifs clés :
     - Spéciation : divergence d'un gène suite à la divergence des espèces,
     - Duplication : copie d'un gène au sein d'une même espèce,
-    - Perte de gènes (optionnelle selon l'arbre analysé).
+    - Perte de gènes (optionnelle).
 """
 
 from ete3 import *
@@ -97,7 +97,7 @@ def load_trees(gene_input, species_input):
     else:
         print("Chargement de l'arbre d'espèces depuis la chaîne Newick")
 
-    G = Tree(gene_input, format=1)
+    G = Tree(gene_input, format=1) #fonction d'ete3 pour charger les arbres
     S = Tree(species_input, format=1)
 
     print("\nArbre de gènes:")
@@ -123,20 +123,20 @@ def initialize_mapping(gene_tree, species_tree):
     for leaf in gene_tree.iter_leaves():
         # Extraire le nom de l'espèce (premier caractère)
         gene_name = leaf.name
-        species_name = gene_name[0:3]
+        species_name = gene_name[0:3] #Le nom de l'espèce est composé de 3 caractères
 
         # Trouver la feuille correspondante dans l'arbre d'espèces
         species_leaf = species_tree.search_nodes(name=species_name)[0]
 
         # Associer M(g) à cette feuille
-        leaf.add_feature("M", species_leaf)
+        leaf.add_feature("M", species_leaf) #On ajoute une étiquette "M" au feuille de l'arbre de gène
 
         print(f"Feuille {gene_name} (espèce {species_name}) → M({gene_name}) = {species_leaf.name}")
 
 
 def compute_lca(node1, node2):
     """
-    Calcule le dernier ancêtre commun (LCA) de deux nœuds dans un arbre.
+    Cherche le dernier ancêtre commun (LCA) de deux nœuds dans un arbre.
 
     Args:
         node1: Premier nœud
@@ -166,7 +166,7 @@ def compute_lca(node1, node2):
 
     # Trouver le dernier ancêtre commun
     lca = None
-    for i in range(min(len(path1), len(path2))): #comparaison des feuilles vers la racine
+    for i in range(min(len(path1), len(path2))): #Comparaison des listes élément par élément pour identifier le dernier noeud partagé, qui correspond au LCA
         if path1[i] == path2[i]:
             lca = path1[i]
         else:
@@ -188,23 +188,23 @@ def compute_mappings_and_classify(gene_tree):
     print("ÉTAPE 2 : PHASE MONTANTE ET CLASSIFICATION")
     print("=" * 60)
 
-    for node in gene_tree.traverse("postorder"):
+    for node in gene_tree.traverse("postorder"): #la recherche se fait des feuille vers la racine de telle sorte qu’un nœud est traité lorsque tous ses fils sont traités
         if not node.is_leaf():
             children = node.get_children()
             g1, g2 = children[0], children[1]
-
+            #Recuperer le M(g) des 2 enfants
             M_g1 = g1.M
             M_g2 = g2.M
 
             # Calculer le LCA dans l'arbre d'espèces
             lca_node = compute_lca(M_g1, M_g2)
-            node.add_feature("M", lca_node)
+            node.add_feature("M", lca_node) #On ajoute une étiquette "M" au noeud de l'arbre de gène
 
             # Classification immédiate
             if lca_node == M_g1 or lca_node == M_g2:
-                node.add_feature("event_type", "DUPLICATION")
+                node.add_feature("event_type", "DUPLICATION") #On ajoute une étiquette "event_type" de type "DUPLICATION" au noeud
             else:
-                node.add_feature("event_type", "SPÉCIATION")
+                node.add_feature("event_type", "SPÉCIATION") #On ajoute une étiquette "event_type" de type "SPÉCIATION# " au noeud
 
             print(f"\nNœud interne '{node.name}':")
             print(f"  Enfant 1: {g1.name} → M = {M_g1.name}")
@@ -293,16 +293,20 @@ def option_verif_et_loss(gene_input, species_input, show_verif=False, show_loss=
         show_verif: Si True, affiche genetree
         show_loss: Si True, affiche recon_tree
     """
-    # Charger les arbres
+    # Charger les arbres avec module de ete3
     genetree = PhyloTree(gene_input)
     sptree = PhyloTree(species_input)
 
     print("\n" + "=" * 60)
+
+
     options_actives = []
     if show_verif:
         options_actives.append("VERIF")
     if show_loss:
         options_actives.append("LOSS")
+
+
     print(f"OPTIONS: {' + '.join(options_actives)}")
     print("=" * 60)
 
