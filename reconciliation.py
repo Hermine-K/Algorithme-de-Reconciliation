@@ -19,6 +19,67 @@ import os
 import sys
 import argparse
 
+def load_trees(gene_input, species_input):
+    """
+    Charge les arbres de gènes et d'espèces depuis un fichier ou une chaîne Newick.
+
+    Args:
+        gene_input: Chemin vers fichier ou chaîne Newick de l'arbre de gènes
+        species_input: Chemin vers fichier ou chaîne Newick de l'arbre d'espèces
+
+    Returns:
+        Tuple (arbre_genes, arbre_especes)
+    """
+    # Charger l'arbre de gènes
+    if os.path.isfile(gene_input):
+        print(f"Chargement de l'arbre de gènes depuis le fichier: {gene_input}")
+        G = Tree(gene_input, format=1)
+    else:
+        print("Chargement de l'arbre de gènes depuis la chaîne Newick")
+        G = Tree(gene_input, format=1)
+
+    # Charger l'arbre d'espèces
+    if os.path.isfile(species_input):
+        print(f"Chargement de l'arbre d'espèces depuis le fichier: {species_input}")
+        S = Tree(species_input, format=1)
+    else:
+        print("Chargement de l'arbre d'espèces depuis la chaîne Newick")
+        S = Tree(species_input, format=1)
+
+    print("\nArbre de gènes:")
+    print(G)
+    print("\nArbre d'espèces:")
+    print(S)
+
+    return G, S
+
+def initialize_mapping(gene_tree, species_tree):
+    """
+    Étape 1: Initialisation - Associe chaque feuille de l'arbre de gènes
+    à sa feuille correspondante dans l'arbre d'espèces.
+
+    Args:
+        gene_tree: Arbre de gènes
+        species_tree: Arbre d'espèces
+    """
+    print("\n" + "=" * 60)
+    print("ÉTAPE 1 : INITIALISATION")
+    print("=" * 60)
+
+    for leaf in gene_tree.iter_leaves():
+        # Extraire le nom de l'espèce (premier caractère)
+        gene_name = leaf.name
+        species_name = gene_name[0:3]
+        print(species_name)
+
+        # Trouver la feuille correspondante dans l'arbre d'espèces
+        species_leaf = species_tree.search_nodes(name=species_name)[0]
+
+        # Associer M(g) à cette feuille
+        leaf.add_feature("M", species_leaf)
+
+        print(f"Feuille {gene_name} (espèce {species_name}) → M({gene_name}) = {species_leaf.name}")
+
 
 def compute_lca(node1, node2):
     """
@@ -60,68 +121,6 @@ def compute_lca(node1, node2):
 
     return lca
 
-
-def load_trees(gene_input, species_input):
-    """
-    Charge les arbres de gènes et d'espèces depuis un fichier ou une chaîne Newick.
-
-    Args:
-        gene_input: Chemin vers fichier ou chaîne Newick de l'arbre de gènes
-        species_input: Chemin vers fichier ou chaîne Newick de l'arbre d'espèces
-
-    Returns:
-        Tuple (arbre_genes, arbre_especes)
-    """
-    # Charger l'arbre de gènes
-    if os.path.isfile(gene_input):
-        print(f"Chargement de l'arbre de gènes depuis le fichier: {gene_input}")
-        G = Tree(gene_input, format=1)
-    else:
-        print("Chargement de l'arbre de gènes depuis la chaîne Newick")
-        G = Tree(gene_input, format=1)
-
-    # Charger l'arbre d'espèces
-    if os.path.isfile(species_input):
-        print(f"Chargement de l'arbre d'espèces depuis le fichier: {species_input}")
-        S = Tree(species_input, format=1)
-    else:
-        print("Chargement de l'arbre d'espèces depuis la chaîne Newick")
-        S = Tree(species_input, format=1)
-
-    print("\nArbre de gènes:")
-    print(G)
-    print("\nArbre d'espèces:")
-    print(S)
-
-    return G, S
-
-
-def initialize_mapping(gene_tree, species_tree):
-    """
-    Étape 1: Initialisation - Associe chaque feuille de l'arbre de gènes
-    à sa feuille correspondante dans l'arbre d'espèces.
-
-    Args:
-        gene_tree: Arbre de gènes
-        species_tree: Arbre d'espèces
-    """
-    print("\n" + "=" * 60)
-    print("ÉTAPE 1 : INITIALISATION")
-    print("=" * 60)
-
-    for leaf in gene_tree.iter_leaves():
-        # Extraire le nom de l'espèce (premier caractère)
-        gene_name = leaf.name
-        species_name = gene_name[0:3]
-        print(species_name)
-
-        # Trouver la feuille correspondante dans l'arbre d'espèces
-        species_leaf = species_tree.search_nodes(name=species_name)[0]
-
-        # Associer M(g) à cette feuille
-        leaf.add_feature("M", species_leaf)
-
-        print(f"Feuille {gene_name} (espèce {species_name}) → M({gene_name}) = {species_leaf.name}")
 
 
 def compute_mappings_and_classify(gene_tree):
@@ -242,15 +241,8 @@ def option_verif_et_loss(gene_input, species_input, show_verif=False, show_loss=
         show_loss: Si True, affiche recon_tree
     """
     # Charger les arbres
-    if os.path.isfile(gene_input):
-        genetree = PhyloTree(gene_input)
-    else:
-        genetree = PhyloTree(gene_input)
-
-    if os.path.isfile(species_input):
-        sptree = PhyloTree(species_input)
-    else:
-        sptree = PhyloTree(species_input)
+    genetree = PhyloTree(gene_input)
+    sptree = PhyloTree(species_input)
 
     print("\n" + "=" * 60)
     options_actives = []
