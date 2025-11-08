@@ -88,18 +88,17 @@ def load_trees(gene_input, species_input):
     # Charger l'arbre de gènes
     if os.path.isfile(gene_input):
         print(f"Chargement de l'arbre de gènes depuis le fichier: {gene_input}")
-        G = Tree(gene_input, format=1)
     else:
         print("Chargement de l'arbre de gènes depuis la chaîne Newick")
-        G = Tree(gene_input, format=1)
 
     # Charger l'arbre d'espèces
     if os.path.isfile(species_input):
         print(f"Chargement de l'arbre d'espèces depuis le fichier: {species_input}")
-        S = Tree(species_input, format=1)
     else:
         print("Chargement de l'arbre d'espèces depuis la chaîne Newick")
-        S = Tree(species_input, format=1)
+
+    G = Tree(gene_input, format=1)
+    S = Tree(species_input, format=1)
 
     print("\nArbre de gènes:")
     print(G)
@@ -125,7 +124,6 @@ def initialize_mapping(gene_tree, species_tree):
         # Extraire le nom de l'espèce (premier caractère)
         gene_name = leaf.name
         species_name = gene_name[0:3]
-        print(species_name)
 
         # Trouver la feuille correspondante dans l'arbre d'espèces
         species_leaf = species_tree.search_nodes(name=species_name)[0]
