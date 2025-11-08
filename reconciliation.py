@@ -19,6 +19,61 @@ import os
 import sys
 import argparse
 
+def parse_arguments():
+    """
+    Parse les arguments de la ligne de commande.
+
+    Returns:
+        Namespace contenant les arguments parsés
+    """
+    parser = argparse.ArgumentParser(
+        description="Outil de réconciliation phylogénétique",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Exemples d'utilisation:
+  # Avec des chaînes Newick directement
+  python3 reconciliation.py "(((AAA1,BBB1)1,CCC1)2,((CCC2,DDD1)3,DDD2)4)5;" "(((AAA,BBB)6,CCC)7,DDD)8;"
+
+  # Avec des fichiers
+  python3 reconciliation.py gene_tree.nwk species_tree.nwk
+
+  # Avec l'option verif
+  python3 reconciliation.py gene_tree.nwk species_tree.nwk --verif
+
+  # Avec l'option loss
+  python3 reconciliation.py gene_tree.nwk species_tree.nwk --loss
+
+  # Avec les deux options en même temps
+  python3 reconciliation.py gene_tree.nwk species_tree.nwk --verif --loss
+        """
+    )
+
+    parser.add_argument(
+        'arbre_gene',
+        type=str,
+        help="Arbre de gènes (chemin vers fichier .nwk ou chaîne Newick)"
+    )
+
+    parser.add_argument(
+        'arbre_espece',
+        type=str,
+        help="Arbre d'espèces (chemin vers fichier .nwk ou chaîne Newick)"
+    )
+
+    parser.add_argument(
+        '--verif',
+        action='store_true',
+        help="Affiche l'arbre de gènes original avec la méthode reconcile d'ete3"
+    )
+
+    parser.add_argument(
+        '--loss',
+        action='store_true',
+        help="Affiche l'arbre réconcilié avec détection des pertes (méthode reconcile d'ete3)"
+    )
+
+    return parser.parse_args()
+
 def load_trees(gene_input, species_input):
     """
     Charge les arbres de gènes et d'espèces depuis un fichier ou une chaîne Newick.
@@ -273,62 +328,6 @@ def option_verif_et_loss(gene_input, species_input, show_verif=False, show_loss=
     if show_loss:
         print("\nAffichage de l'arbre réconcilié...")
         recon_tree.show()
-
-
-def parse_arguments():
-    """
-    Parse les arguments de la ligne de commande.
-
-    Returns:
-        Namespace contenant les arguments parsés
-    """
-    parser = argparse.ArgumentParser(
-        description="Outil de réconciliation phylogénétique",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Exemples d'utilisation:
-  # Avec des chaînes Newick directement
-  python3 reconciliation.py "(((AAA1,BBB1)1,CCC1)2,((CCC2,DDD1)3,DDD2)4)5;" "(((AAA,BBB)6,CCC)7,DDD)8;"
-
-  # Avec des fichiers
-  python3 reconciliation.py gene_tree.nwk species_tree.nwk
-
-  # Avec l'option verif
-  python3 reconciliation.py gene_tree.nwk species_tree.nwk --verif
-
-  # Avec l'option loss
-  python3 reconciliation.py gene_tree.nwk species_tree.nwk --loss
-
-  # Avec les deux options en même temps
-  python3 reconciliation.py gene_tree.nwk species_tree.nwk --verif --loss
-        """
-    )
-
-    parser.add_argument(
-        'arbre_gene',
-        type=str,
-        help="Arbre de gènes (chemin vers fichier .nwk ou chaîne Newick)"
-    )
-
-    parser.add_argument(
-        'arbre_espece',
-        type=str,
-        help="Arbre d'espèces (chemin vers fichier .nwk ou chaîne Newick)"
-    )
-
-    parser.add_argument(
-        '--verif',
-        action='store_true',
-        help="Affiche l'arbre de gènes original avec la méthode reconcile d'ete3"
-    )
-
-    parser.add_argument(
-        '--loss',
-        action='store_true',
-        help="Affiche l'arbre réconcilié avec détection des pertes (méthode reconcile d'ete3)"
-    )
-
-    return parser.parse_args()
 
 
 def main():
