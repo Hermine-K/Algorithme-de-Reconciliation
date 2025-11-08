@@ -52,7 +52,7 @@ def compute_lca(node1, node2):
 
     # Trouver le dernier ancêtre commun
     lca = None
-    for i in range(min(len(path1), len(path2))):
+    for i in range(min(len(path1), len(path2))): #comparaison des feuilles vers la racine
         if path1[i] == path2[i]:
             lca = path1[i]
         else:
@@ -183,10 +183,6 @@ def display_tree_ascii(gene_tree):
     # Afficher l'arbre en ASCII
     print(gene_tree.get_ascii(show_internal=True))
 
-    # Restaurer les noms originaux
-    for node in gene_tree.traverse():
-        node.name = original_names[node]
-
     print("=" * 80)
 
     print("\n" + "-" * 60)
@@ -196,7 +192,9 @@ def display_tree_ascii(gene_tree):
     duplications = []
     speciations = []
 
+    # Restaurer les noms originaux et affichage de la classification
     for node in gene_tree.traverse():
+        node.name = original_names[node]
         if not node.is_leaf() and hasattr(node, 'event_type'):
             if node.event_type == "DUPLICATION":
                 duplications.append(node.name)
