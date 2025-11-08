@@ -13,7 +13,7 @@ Notre algorithme réalise cette réconciliation avec la librairie ETE3 [2], qui 
 ### 1. Explication du Code 
 #### a. Fonctions 
 
-#### a.1 Parse Arguments
+#### a.1 Parse Arguments et Load 
 
 Il s’agit de la première fonction de notre algorithme de réconciliation. Elle permet de spécifier en argument, lors du lancement du script, les fichiers contenant les arbres d’espèces et d’ancêtres des gènes, ou de les saisir directement dans la ligne de commande.
 
@@ -23,6 +23,14 @@ Le module argparse facilite la création automatique de l’aide (`-help`) et le
 
 ##### a.2 Load Trees
 
+   Charge les arbres de gènes et d'espèces depuis un fichier ou une chaîne Newick.
+
+    Args:
+        gene_input: Chemin vers fichier ou chaîne Newick de l'arbre de gènes
+        species_input: Chemin vers fichier ou chaîne Newick de l'arbre d'espèces
+
+    Returns:
+        Tuple (arbre_genes, arbre_especes)
 
 
 ##### a.3 Initialize Mapping
