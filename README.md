@@ -13,33 +13,27 @@ Notre algorithme réalise cette réconciliation avec la librairie ETE3 [2], qui 
 ### 1. Explication du Code 
 #### a. Fonctions 
 
-#### a.1 Parse Arguments et Load 
+#### a.1 Parse Arguments et Load  Tree
 
-Il s’agit de la première fonction de notre algorithme de réconciliation. Elle permet de spécifier en argument, lors du lancement du script, les fichiers contenant les arbres d’espèces et d’ancêtres des gènes, ou de les saisir directement dans la ligne de commande.
+La première étape de notre algorithme de réconciliation consiste à analyser les arguments passés au script.
+Cette fonction permet d’indiquer, au moment de l’exécution, les fichiers contenant les arbres d’espèces et les arbres de gènes, ou bien de les fournir directement via la ligne de commande.
 
-Cette fonction utilise les librairies os (`import os`), sys (`import sys`) et argparse (`import argparse`).
-Elle gère également les options `--loss`, `--verif` et `-h`.
-Le module argparse facilite la création automatique de l’aide (`-help`) et le traitement des arguments fournis au script.
+Elle s’appuie sur les librairies os (`import os`), sys (`import sys`), argparse (`import argparse`).
 
-##### a.2 Load Trees
+La fonction gère plusieurs options :
 
-   Charge les arbres de gènes et d'espèces depuis un fichier ou une chaîne Newick.
+* `--loss` : active la prise en compte des pertes de gènes
 
-    Args:
-        gene_input: Chemin vers fichier ou chaîne Newick de l'arbre de gènes
-        species_input: Chemin vers fichier ou chaîne Newick de l'arbre d'espèces
+* `--verif` : lance une vérification des arbres fournis
 
-    Returns:
-        Tuple (arbre_genes, arbre_especes)
+* `-h` : affiche l’aide automatique générée par argparse
 
+En complément, la fonction **load Tree** permet de charger les arbres de gènes et d’espèces à partir d’un fichier ou d’une chaîne au format Newick, format standard pour représenter la structure hiérarchique d’un arbre phylogénétique.
+   
 
 ##### a.3 Initialize Mapping
 
-q
-q
-q
-q
-q 
+
 
 ##### a.4 Compute Lca
 a
